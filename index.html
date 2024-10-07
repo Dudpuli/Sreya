@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Magical Surprise for Sreya</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .content {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            text-align: center;
+            z-index: 10;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .poem {
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+        }
+
+        .poem img {
+            max-width: 150px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .floating-element {
+            position: absolute;
+            pointer-events: none;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .balloon {
+            position: absolute;
+            bottom: -100px;
+            width: 40px;
+            height: 60px;
+            background-color: #ff5252;
+            border-radius: 50%;
+            animation: rise 15s infinite;
+            opacity: 0.7;
+        }
+
+        .balloon::before {
+            content: "";
+            position: absolute;
+            width: 10px;
+            height: 15px;
+            background-color: #ff5252;
+            bottom: -8px;
+            left: 15px;
+            transform: rotate(45deg);
+        }
+
+        .balloon::after {
+            content: "";
+            position: absolute;
+            width: 2px;
+            height: 50px;
+            background-color: #fff;
+            bottom: -50px;
+            left: 20px;
+        }
+
+        @keyframes rise {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+            }
+        }
+
+        #revealButton {
+            background-color: #4a4a4a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #revealButton:hover {
+            background-color: #333;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <h1>A Magical Surprise for Sreya</h1>
+            <div id="poemContainer"></div>
+            <button id="revealButton">Reveal Next Surprise</button>
+        </div>
+    </div>
+
+    <script>
+        const poems = [
+            {
+                text: `In the tapestry of life, you're a golden thread,<br>
+                       Sreya, your friendship, a gift widespread.<br>
+                       With every laugh, every tear we've shed,<br>
+                       Our bond grows stronger, as time has said.`,
+                image: 'https://public.blob.vercel-storage.com/nilanjana-photo1-eB9DhfmtQ6TppzVOtsPw4YAl1be33i.jpg'
+            },
+            {
+                text: `Like stars in the night, your kindness shines,<br>
+                       Guiding me through life's complex designs.<br>
+                       Sreya, a name that's etched in my heart,<br>
+                       A friendship so true, we'll never part.`,
+                image: 'https://public.blob.vercel-storage.com/nilanjana-photo2-eB9DhfmtQ6TppzVOtsPw4YAl1be33i.jpg'
+            },
+            {
+                text: `In gardens of memories, our moments bloom,<br>
+                       Your presence, Sreya, dispels all gloom.<br>
+                       Through seasons of change, one thing stays true,<br>
+                       The beautiful friendship I share with you.`,
+                image: 'https://public.blob.vercel-storage.com/nilanjana-photo3-eB9DhfmtQ6TppzVOtsPw4YAl1be33i.jpg'
+            }
+        ];
+
+        const floatingElements = [
+            '🌟', '🎵', '🌸', '🦋', '✨', '🌈', '💖', '🍃'
+        ];
+
+        const balloonColors = [
+            '#ff5252', '#ff4081', '#e040fb', '#7c4dff', '#536dfe', '#448aff', '#40c4ff', '#18ffff',
+            '#64ffda', '#69f0ae', '#b2ff59', '#eeff41', '#ffff00', '#ffd740', '#ffab40', '#ff6e40'
+        ];
+
+        let currentPoem = 0;
+
+        function addFloatingElements() {
+            for (let i = 0; i < 20; i++) {
+                const element = document.createElement('div');
+                element.className = 'floating-element';
+                element.style.left = `${Math.random() * 100}vw`;
+                element.style.top = `${Math.random() * 100}vh`;
+                element.style.fontSize = `${Math.random() * 20 + 10}px`;
+                element.textContent = floatingElements[Math.floor(Math.random() * floatingElements.length)];
+                element.style.animationDuration = `${Math.random() * 3 + 5}s`;
+                element.style.animationDelay = `${Math.random() * 5}s`;
+                document.body.appendChild(element);
+            }
+        }
+
+        function addBalloons() {
+            for (let i = 0; i < 20; i++) {
+                const balloon = document.createElement('div');
+                balloon.className = 'balloon';
+                balloon.style.left = `${Math.random() * 100}vw`;
+                balloon.style.backgroundColor = balloonColors[Math.floor(Math.random() * balloonColors.length)];
+                balloon.style.animationDuration = `${Math.random() * 5 + 10}s`;
+                balloon.style.animationDelay = `${Math.random() * 5}s`;
+                document.body.appendChild(balloon);
+            }
+        }
+
+        function revealPoem() {
+            if (currentPoem < poems.length) {
+                const poem = poems[currentPoem];
+                const poemElement = document.createElement('div');
+                poemElement.className = 'poem';
+                poemElement.innerHTML = `
+                    <img src="${poem.image}" alt="Sreya">
+                    <p>${poem.text}</p>
+                `;
+                document.getElementById('poemContainer').appendChild(poemElement);
+                currentPoem++;
+
+                if (currentPoem === poems.length) {
+                    document.getElementById('revealButton').classList.add('hidden');
+                }
+            }
+        }
+
+        document.getElementById('revealButton').addEventListener('click', revealPoem);
+
+        addFloatingElements();
+        addBalloons();
+    </script>
+</body>
+</html>
